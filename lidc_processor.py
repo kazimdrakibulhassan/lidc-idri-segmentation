@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3
 import numpy as np
 import pydicom
 import os
@@ -126,9 +126,9 @@ def segmented_processing(slice_pixels, lung_mask=None, slice_idx=0, **kwargs):
     masked_slice = slice_pixels * slice_mask
     normalized_slice = normalize_image(masked_slice)
     
-    # Create white background
-    final_image = np.ones_like(normalized_slice)
-    final_image[slice_mask == 1] = normalized_slice[slice_mask == 1]
+    # Create black background for use with gray_r colormap
+    final_image = np.zeros_like(normalized_slice)
+    final_image[slice_mask == 1] = 1.0 - normalized_slice[slice_mask == 1]
     
     return final_image
 
@@ -149,14 +149,13 @@ def convert_dicom(input_dir, output_dir, method="segmented", window_center=20, w
         if method == "segmented":
             print("Segmenting lungs...")
             lung_mask = segment_lung_mask(patient_pixels, fill_lung_structures=True)
-            
             print(f"Saving PNG files to {output_dir}...")
             count = 0
             for i, slice_pixels in enumerate(tqdm(patient_pixels)):
                 processed = segmented_processing(slice_pixels, lung_mask=lung_mask, slice_idx=i)
                 output_path = os.path.join(output_dir, f"slice_{i+1:03d}.png")
                 os.makedirs(output_dir, exist_ok=True)
-                plt.imsave(output_path, processed, cmap=plt.cm.gray)
+                plt.imsave(output_path, processed, cmap=plt.cm.gray_r)
                 count += 1
         elif method == "raw":
             print(f"Saving PNG files to {output_dir} with window settings...")
