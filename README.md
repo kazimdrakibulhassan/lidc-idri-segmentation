@@ -31,7 +31,7 @@ python lidc_processor.py --input <input_path> --output <output_path> [options]
 
 #### 1. Segmented Processing (Recommended)
 ```bash
-cd e:\LDLN && python lidc_processor.py --input "LIDC-IDRI" --output "Segmentation"
+cd d:\lidc-idri-segmentation && python lidc_processor.py --input "LIDC-IDRI" --output "Segmentation"
 ```
 Or simply:
 ```bash
